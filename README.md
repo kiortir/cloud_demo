@@ -14,3 +14,10 @@ db_username=cloud
 db_password=...
 db_db=...
 ```
+
+## Пример .env для  правильной подсветки импротов в vsCode
+PYTHONPATH=./cloud
+
+## Запуск сервера
+> Обязательно из папки ./cloud или с проставкой PYTHONPATH, иначе импорты умрут
+`uvicorn asgi:app --reload`
