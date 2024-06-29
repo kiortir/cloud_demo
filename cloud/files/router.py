@@ -2,23 +2,11 @@ from pathlib import Path
 from typing import Annotated, AsyncGenerator
 from fastapi import APIRouter, File, UploadFile, Depends
 from storage.providers.files import FilesStorageProvider
+import repository.file
+from schema.file import FileCreate
+from db import AsyncConnection, get_connection
 
 router = APIRouter(prefix="/files")
-
-
-@router.get("/")
-def read_root():
-    return {"Hello": "World"}
-
-
-@router.get("/items/{item_id}")
-def read_item(item_id: int, q: str | None = None, q2: str | None = None):
-    return {"item_id": item_id, "q": q}
-
-
-@router.post("/files/")
-async def create_file(file: Annotated[bytes, File()]):
-    return {"file_size": len(file)}
 
 
 async def as_generator(file: UploadFile) -> AsyncGenerator[bytes, None]:
@@ -32,11 +20,22 @@ async def as_generator(file: UploadFile) -> AsyncGenerator[bytes, None]:
         total += to_read
 
 
-@router.post("/uploadfile/")
-async def create_upload_file(file: UploadFile):
-    print(file)
-    provider = FilesStorageProvider(root_directory=Path("../"), media_base_url="http://localhost:8000/media/")
-    url = await provider.write(
-        file.filename or "test", ["demo", "join"], as_generator(file)
-    )
-    return {"filename": file.filename, "url": url}
+## TODO Начать прокидывать имя файла и ext из запроса
+@router.post("/upload/")
+async def create_upload_file(
+    file: UploadFile, con: AsyncConnection = Depends(get_connection)
+):
+    # print(file)
+    # provider = FilesStorageProvider(root_directory=Path("../"), media_base_url="http://localhost:8000/media/")
+    # url = await provider.write(
+    #     file.filename or "test", ["demo", "join"], as_generator(file)
+    # )
+    # return {"filename": file.filename, "url": url}
+    f = FileCreate(name="test", hash="test", ext=".json", created_by=None)
+    created_file = await repository.file.create_file(con, f)
+    return created_file
+
+## Написать методы для:
+## Получения файла по id
+## Изменение файла по id (имя/ext)
+## Удаление файла по id
