@@ -1,0 +1,21 @@
+version: '3.10'
+
+services:
+  cloud-migration:
+    build: 
+      context: .
+      dockerfile: ./docker/migrate.Dockerfile
+    volumes:
+      - ./alembic/versions/:/app/alembic/versions/
+      - ./cloud/:/app/cloud/
+    env_file:
+      - ./.db.migration.env
+    environment:
+      - runtime=migration 
+    networks:
+      - default
+
+networks:
+  default:
+    name: postgres-network
+    external: true
