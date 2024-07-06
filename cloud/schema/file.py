@@ -16,3 +16,7 @@ class FileCreate(FileBase, BaseModel): ...
 class FileResponse(FileBase, BaseModel):
     id: UUID
     created_at: datetime.datetime
+
+class FileUpdate(BaseModel):
+    name: str
+    ext: str

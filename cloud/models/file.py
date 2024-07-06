@@ -27,4 +27,4 @@ class File(Base):
     created_by: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=True)
 
     def __repr__(self) -> str:
-        return f"File(id={self.id!r}, name={self.name!r}, hash={self.hash!r}, created_at={self.created_at!r}, created_by={self.created_by!r})"
+        return f"File(id={self.id!r}, name={self.name!r}, ext={self.ext!r}, hash={self.hash!r}, created_at={self.created_at!r}, created_by={self.created_by!r})"
