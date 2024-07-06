@@ -1,4 +1,4 @@
-from sqlalchemy import insert
+from sqlalchemy import insert, select, update, delete, CursorResult
 from sqlalchemy.ext.asyncio import AsyncConnection
 
 from models.file import File
@@ -8,7 +8,32 @@ from schema.file import FileCreate, FileResponse
 ## Получения файла по id
 ## Изменение файла по id (имя/ext)
 ## Удаление файла по id
+async def get_file_to_id(connection: AsyncConnection, ind: int
+) -> CursorResult:
+    stmt = (
+        select(File).where(File.id == ind)
+    )
 
+    return await connection.execute(stmt)
+
+async def update_file_to_id(connection: AsyncConnection, ind: int,
+                            value: dict):
+    update_stmt = (
+        update(File).where(File.id == ind)
+        .values(
+            value
+        )
+    )
+    await connection.execute(update_stmt)
+    await connection.commit()
+
+async def delete_file_to_id(connection: AsyncConnection, ind: int
+):
+    stmt = (
+        delete(File).where(File.id == ind)
+    )
+    await connection.execute(stmt)
+    await connection.commit()
 
 async def create_file(
     connection: AsyncConnection, file: FileCreate

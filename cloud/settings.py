@@ -1,5 +1,6 @@
 from typing import Literal
 from enum import StrEnum
+from pathlib import Path
 
 from pydantic import SecretStr, computed_field, ConfigDict
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -20,8 +21,8 @@ RUNTIME_CONFIG = RuntimeConfig()
 
 def get_env_file():
     if RUNTIME_CONFIG.runtime == RuntimeType.DEV:
-        return "../.db.env"
-
+        return Path("__file__").parent.parent / ".db.env"
+    
 class PostgresSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=get_env_file(), env_prefix="db_")
 
